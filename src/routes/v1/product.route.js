@@ -1,16 +1,18 @@
 const express = require('express');
-const validate = require('../../middlewares/validate');
-const productValidation = require('../../validations/product.validation');
+// const validate = require('../../middlewares/validate');
+// const productValidation = require('../../validations/product.validation');
 const productController = require('../../controllers/product.controller');
 
 const router = express.Router();
 
-router
-	.route('/')
-	.get(
-		validate(productValidation.getProducts),
-		productController.getProducts
-	);
+// router
+// 	.route('/')
+// 	.get(
+// 		validate(productValidation.getProducts),
+// 		productController.getProducts
+// 	);
+
+router.get('/', productController.getProducts);
 
 /**
  * @swagger
@@ -30,32 +32,64 @@ router
  *        - in: query
  *          name: itemId
  *          schema:
- *            type: integer
+ *            type: json
+ *            example:
+ *              like: '1086'
+ *            properties:
+ *              like:
+ *                type: string
  *          description: product item id
  *        - in: query
  *          name: name
  *          schema:
- *            type: string
+ *            type: json
+ *            example:
+ *              like: 'woo'
+ *            properties:
+ *              like:
+ *                type: string
  *          description: product name
  *        - in: query
  *          name: locale
  *          schema:
- *            type: string
+ *            type: json
+ *            example:
+ *              like: 'tr'
+ *            properties:
+ *              like:
+ *                type: string
  *          description: product locale
  *        - in: query
  *          name: click
  *          schema:
- *            type: integer
+ *            type: json
+ *            example:
+ *              gt: 10
+ *              lt: 250
+ *            properties:
+ *              gt:
+ *                type: integer
+ *              lt:
+ *                type: integer
  *          description: click number
  *        - in: query
  *          name: purchase
  *          schema:
- *            type: integer
+ *            type: json
+ *            example:
+ *              gt: 10
+ *              lt: 700
+ *            properties:
+ *              gt:
+ *                type: integer
+ *              lt:
+ *                type: integer
  *          description: purchase number
  *        - in: query
  *          name: sortBy
  *          schema:
  *            type: string
+ *            example: purchase:asc
  *          description: sort by query in the form of field:desc/asc (ex. name:asc)
  *        - in: query
  *          name: limit
