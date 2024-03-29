@@ -1,0 +1,59 @@
+components:
+    schemas:
+        Product:
+            type: object
+            properties:
+                id:
+                    type: number
+                item_id:
+                    type: number
+                name:
+                    type: string
+                locale:
+                    type: string
+                click:
+                    type: number
+                purchase:
+                    type: number
+        Error:
+            type: object
+            properties:
+                code:
+                    type: number
+                message:
+                    type: string
+
+        Success:
+            type: object
+            properties:
+                success:
+                    type: boolean
+
+    responses:
+        Sucess:
+            description: OK
+            content:
+                application/json:
+                    schema:
+                        $ref: '#/components/schemas/Success'
+                    example:
+                        code: 200
+                        message: OK
+        Forbidden:
+            description: Forbidden
+            content:
+                application/json:
+                    schema:
+                        $ref: '#/components/schemas/Error'
+                    example:
+                        code: 403
+                        message: Forbidden
+        NotFound:
+            description: Not found
+            content:
+                application/json:
+                    schema:
+                        $ref: '#/components/schemas/Error'
+                    example:
+                        code: 404
+                        message: Not found
