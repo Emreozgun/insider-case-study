@@ -9,7 +9,14 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "prettier": "prettier --check **/*.js",
-    "dev": "cross-env NODE_ENV=development nodemon src/index.js"
+    "dev": "cross-env NODE_ENV=development nodemon src/index.js",
+  	"db:migrate": "sequelize-cli db:migrate",
+  	"dev-mac:up-docker": "docker-compose --project-name=product-app --file=docker/docker-compose-mac.development.yml up",
+ 	"dev-mac:down-docker": "docker-compose --project-name=product-app --file=docker/docker-compose-mac.development.yml down",
+    "dev:up-docker": "docker-compose --project-name=product-app --file=docker/docker-compose.development.yml up",
+  	"dev:down-docker": "docker-compose --project-name=product-app --file=docker/docker-compose.development.yml down",
+  	"db:seed": "sequelize-cli db:seed:all",
+  	"serve:development": "nodemon --legacy-watch ./dist/index.js"
   },
   "engines": {
     "node": ">=12.0.0"
