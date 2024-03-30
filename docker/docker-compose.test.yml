@@ -5,10 +5,6 @@ services:
     build:
       context: ..
       dockerfile: ./docker/Dockerfile
-    volumes:
-        - ../src:/app/src:ro
-        - ../.sequelizerc:/app/.sequelizerc:ro
-        - ../package.json:/app/package.json:ro
     ports:
         - "3000:3000"
     environment:
@@ -29,11 +25,6 @@ services:
       build:
           context: ..
           dockerfile: ./docker/db-init/Dockerfile
-      volumes:
-          - ../src:/app/src:ro
-          - ../docker/db-init/entrypoint.sh:/app/entrypoint.sh:ro
-          - ../.sequelizerc:/app/.sequelizerc:ro
-          - ../package.json:/app/package.json:ro
       environment:
           - NODE_ENV=development
           - SQL_USERNAME=emre

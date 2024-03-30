@@ -2,7 +2,9 @@ const dotenv = require('dotenv');
 const path = require('path');
 const Joi = require('joi');
 
+console.log('start load env');
 dotenv.config({ path: path.join(__dirname, '../../.env') });
+console.log('end load env');
 
 const envVarsSchema = Joi.object()
 	.keys({
@@ -55,10 +57,10 @@ module.exports = {
 		cookieExpirationHours: envVars.COOKIE_EXPIRATION_HOURS,
 	},
 	sqlDB: {
-		user: envVars.SQL_USERNAME,
-		host: envVars.SQL_HOST,
-		database: envVars.SQL_DATABASE_NAME,
-		password: envVars.SQL_PASSWORD,
+		user: process.env.SQL_USERNAME || envVars.SQL_USERNAME,
+		host: process.env.SQL_HOST || envVars.SQL_HOST,
+		database: process.env.SQL_DATABASE_NAME || envVars.SQL_DATABASE_NAME,
+		password: process.env.SQL_PASSWORD || envVars.SQL_PASSWORD,
 		dialect: envVars.SQL_DIALECT,
 		pool: {
 			max: envVars.SQL_MAX_POOL,
