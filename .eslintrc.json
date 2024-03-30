@@ -2,7 +2,8 @@
     "env": {
         "node": true,
         "browser": true,
-        "es6": true
+        "es6": true,
+		"jest": true
     },
     "extends": ["airbnb-base", "plugin:prettier/recommended"],
     "plugins": ["prettier"],
@@ -16,4 +17,3 @@
         "consistent-return": "off"
     }
   }
-  
