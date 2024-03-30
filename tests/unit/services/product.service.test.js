@@ -19,7 +19,7 @@ describe('Product service', () => {
 				const products = await productService.getProducts(mockRequest);
 				// Test assertions
 				expect(products).toBeDefined();
-				expect(products.count).toBe(15);
+				expect(products.count).toBe(37);
 				expect(products.rows.length).toBe(15);
 			});
 			it('should get only one products with unique filter', async () => {
@@ -43,14 +43,14 @@ describe('Product service', () => {
 				mockRequest.query = {
 					sortBy: 'purchase:asc',
 					limit: '10',
-					page: '2', // Test for second page
+					page: '4', // Test for second page
 				};
 				const products = await productService.getProducts(mockRequest);
 
 				// Test assertions
 				expect(products).toBeDefined();
-				expect(products.count).toBe(15);
-				expect(products.rows.length).toBe(5);
+				expect(products.count).toBe(37);
+				expect(products.rows.length).toBe(7);
 			});
 			it('should correctly sort the results', async () => {
 				mockRequest.query = {
