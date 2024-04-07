@@ -12,15 +12,14 @@ describe('Product service', () => {
 			it('should get all products without filtering', async () => {
 				mockRequest.query = {
 					// locale: '{"like": "tr"}',
-					sortBy: 'purchase:asc',
 					limit: '15',
 					page: '1',
 				};
 				const products = await productService.getProducts(mockRequest);
 				// Test assertions
 				expect(products).toBeDefined();
-				expect(products.count).toBe(37);
-				expect(products.rows.length).toBe(15);
+				expect(products.hits.total.value).toBe(37);
+				expect(products.hits.hits.length).toBe(15);
 			});
 			it('should get only one products with unique filter', async () => {
 				mockRequest.query = {
@@ -29,15 +28,17 @@ describe('Product service', () => {
 					locale: '{"like": "tr"}',
 					click: '{"gt": 10, "lt": 250}',
 					purchase: '{"gt": 10, "lt": 700}',
-					sortBy: 'purchase:asc',
 					limit: '15',
 					page: '1',
 				};
 				const products = await productService.getProducts(mockRequest);
 				// Test assertions
 				expect(products).toBeDefined();
-				expect(products.count).toBe(1);
-				expect(products.rows.length).toBe(1);
+				expect(products.hits.total.value).toBe(1);
+				expect(products.hits.hits.length).toBe(1);
+				expect(products.hits.hits[0]._source.name).toEqual(
+					'Woo Album #4'
+				);
 			});
 			it('should correctly paginate the results', async () => {
 				mockRequest.query = {
@@ -49,12 +50,10 @@ describe('Product service', () => {
 
 				// Test assertions
 				expect(products).toBeDefined();
-				expect(products.count).toBe(37);
-				expect(products.rows.length).toBe(7);
+				expect(products.hits.hits.length).toBe(7);
 			});
-			it('should correctly sort the results', async () => {
+			it('should correctly sort the results when active config is purchase:ascending', async () => {
 				mockRequest.query = {
-					sortBy: 'click:asc', // Assuming there is a 'click' field in the database
 					limit: '15',
 					page: '1',
 				};
@@ -62,10 +61,13 @@ describe('Product service', () => {
 
 				// Test assertions
 				expect(products).toBeDefined();
-				expect(products.rows.length).toBeGreaterThan(1);
+				expect(products.hits.hits.length).toBe(15);
 
 				// Verify sorting order
-				const clicks = products.rows.map((product) => product.click);
+				const clicks = products.hits.hits.map(
+					(product) => product._source.purchase
+				);
+
 				for (let i = 0; i < clicks.length - 1; i += 1) {
 					expect(clicks[i]).toBeLessThanOrEqual(clicks[i + 1]);
 				}
@@ -80,7 +82,8 @@ describe('Product service', () => {
 
 				// Test assertions
 				expect(products).toBeDefined();
-				expect(products.rows.length).toBe(0);
+				expect(products.hits.total.value).toBe(0);
+				expect(products.hits.hits.length).toBe(0);
 			});
 		});
 	});

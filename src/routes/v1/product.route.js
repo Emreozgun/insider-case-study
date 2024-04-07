@@ -12,6 +12,8 @@ const router = express.Router();
 // 		productController.getProducts
 // 	);
 
+// TODO: add enpoint for change active configuration
+
 router.get('/', productController.getProducts);
 
 /**

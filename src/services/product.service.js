@@ -23,7 +23,7 @@ async function getProducts(req) {
 		throw new Error('No active configuration found');
 	}
 
-	console.log({ activeConfig });
+	// console.log({ activeConfig });
 
 	const elasticQuery = {
 		from: offset,
@@ -67,8 +67,8 @@ async function getProducts(req) {
 		const nameJson = JSON.parse(name);
 		if (nameJson.like)
 			elasticQuery.query.bool.must.push({
-				wildcard: {
-					name: `*${nameJson.like}*`,
+				match: {
+					name: nameJson.like,
 				},
 			});
 	}
