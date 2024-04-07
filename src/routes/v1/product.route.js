@@ -25,10 +25,10 @@ router.get('/', productController.getProducts);
  * @swagger
  * /product:
  *    get:
- *      summary: Get all products
- *      description: Only admins can retrieve all products.
- *      tags: [Products]
- *      parameters:
+ *       summary: Get all products
+ *       description: Only admins can retrieve all products.
+ *       tags: [Products]
+ *       parameters:
  *        - in: query
  *          name: itemId
  *          schema:
@@ -86,12 +86,6 @@ router.get('/', productController.getProducts);
  *                type: integer
  *          description: purchase number
  *        - in: query
- *          name: sortBy
- *          schema:
- *            type: string
- *            example: purchase:asc
- *          description: sort by query in the form of field:desc/asc (ex. name:asc)
- *        - in: query
  *          name: limit
  *          schema:
  *            type: integer
@@ -105,31 +99,54 @@ router.get('/', productController.getProducts);
  *            minimum: 1
  *            default: 1
  *          description: Page number
- *      responses:
- *        "200":
- *          description: OK
- *          content:
- *            application/json:
- *              schema:
- *                type: object
- *                properties:
- *                  results:
- *                    type: array
- *                    items:
- *                      $ref: '#/components/schemas/Product'
- *                  page:
- *                    type: integer
- *                    example: 1
- *                  limit:
- *                    type: integer
- *                    example: 10
- *                  totalPages:
- *                    type: integer
- *                    example: 1
- *                  totalResults:
- *                    type: integer
- *                    example: 1
- *        "403":
- *          $ref: '#/components/responses/Forbidden'
+ *       responses:
+ *         '200':
+ *           description: Successful response
+ *           content:
+ *             application/json:
+ *               schema:
+ *                 type: object
+ *                 properties:
+ *                   took:
+ *                     type: integer
+ *                     description: Time taken for the request to be processed
+ *                   timed_out:
+ *                     type: boolean
+ *                     description: Whether the request timed out or not
+ *                   _shards:
+ *                     type: object
+ *                     properties:
+ *                       total:
+ *                         type: integer
+ *                         description: Total number of shards
+ *                       successful:
+ *                         type: integer
+ *                         description: Number of successful shards
+ *                       skipped:
+ *                         type: integer
+ *                         description: Number of skipped shards
+ *                       failed:
+ *                         type: integer
+ *                         description: Number of failed shards
+ *                   hits:
+ *                     type: object
+ *                     properties:
+ *                       total:
+ *                         type: object
+ *                         properties:
+ *                           value:
+ *                             type: integer
+ *                             description: Total number of hits
+ *                           relation:
+ *                             type: string
+ *                             description: Relation of the value (e.g., 'eq' for equal)
+ *                       max_score:
+ *                         type: number
+ *                         description: Maximum score among hits
+ *                       hits:
+ *                         type: array
+ *                         items:
+ *                           type: object
+ *                           description: Information about each hit
  */
 module.exports = router;

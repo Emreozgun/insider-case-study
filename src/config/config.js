@@ -2,9 +2,7 @@ const dotenv = require('dotenv');
 const path = require('path');
 const Joi = require('joi');
 
-console.log('start load env');
 dotenv.config({ path: path.join(__dirname, '../../.env') });
-console.log('end load env');
 
 const envVarsSchema = Joi.object()
 	.keys({
@@ -55,6 +53,9 @@ module.exports = {
 	},
 	cookie: {
 		cookieExpirationHours: envVars.COOKIE_EXPIRATION_HOURS,
+	},
+	elasticSearch: {
+		host: process.env.ELASTICSEARCH_HOST || 'localhost',
 	},
 	sqlDB: {
 		user: process.env.SQL_USERNAME || envVars.SQL_USERNAME,

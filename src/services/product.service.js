@@ -1,91 +1,102 @@
-const { Op } = require('sequelize');
+const axios = require('axios');
 const { getOffset } = require('../utils/query');
 const config = require('../config/config.js');
 const db = require('../db/models');
+const { elasticSearch } = require('../config/config.js');
 
 async function getProducts(req) {
 	const { page: defaultPage, limit: defaultLimit } = config.pagination;
-	const {
-		name,
-		itemId,
-		locale,
-		click,
-		purchase,
-		page,
-		sortBy,
-		limit,
-	} = req.query;
+	const { name, itemId, locale, page, limit } = req.query;
 
-	const itemIdFilters = {};
-	const nameFilters = {};
-	const localeFilters = {};
-	const clickFilters = {};
-	const purchaseFilters = {};
 	const pageFilters = {
 		page: page || defaultPage,
 		size: limit || defaultLimit,
 	};
+	const offset = getOffset(pageFilters.page, pageFilters.size);
 
-	let sortCriteria = [];
-	if (sortBy) {
-		sortCriteria = sortBy.split(',').map((sortField) => {
-			const [field, order] = sortField.split(':');
-			return [field, order.toUpperCase()];
-		});
+	const activeConfig = await db.configurations.findOne({
+		where: { is_active: true },
+		raw: true,
+	});
+
+	if (!activeConfig) {
+		throw new Error('No active configuration found');
 	}
 
-	if (click) {
-		const clickJson = JSON.parse(click);
-		clickFilters.click = {};
-		if (clickJson.lt) clickFilters.click[Op.lt] = clickJson.lt;
-		if (clickJson.gt) clickFilters.click[Op.gt] = clickJson.gt;
-	}
+	console.log({ activeConfig });
 
-	if (purchase) {
-		const purchaseJson = JSON.parse(purchase);
-		purchaseFilters.purchase = {};
-		if (purchaseJson.lt) purchaseFilters.purchase[Op.lt] = purchaseJson.lt;
-		if (purchaseJson.gt) purchaseFilters.purchase[Op.gt] = purchaseJson.gt;
-	}
+	const elasticQuery = {
+		from: offset,
+		size: pageFilters.size,
+		query: { bool: { must: [] } },
+		sort: [
+			{
+				[activeConfig.sort_by]: {
+					order: activeConfig.sort_order,
+				},
+			},
+		],
+	};
+
+	['click', 'purchase'].forEach((field) => {
+		if (req.query[field]) {
+			const fieldJson = JSON.parse(req.query[field]);
+
+			elasticQuery.query.bool.must.push({
+				range: {
+					[field]: {
+						gt: fieldJson.gt,
+						lt: fieldJson.lt,
+					},
+				},
+			});
+		}
+	});
 
 	if (itemId) {
 		const itemIdJson = JSON.parse(itemId);
-		itemIdFilters.item_id = {};
 		if (itemIdJson.like)
-			itemIdFilters.item_id = { [Op.like]: `%${itemIdJson.like}%` };
+			elasticQuery.query.bool.must.push({
+				wildcard: {
+					item_id: `*${itemIdJson.like}*`,
+				},
+			});
 	}
 
 	if (name) {
 		const nameJson = JSON.parse(name);
-		nameFilters.name = {};
 		if (nameJson.like)
-			nameFilters.name = { [Op.iLike]: `%${nameJson.like}%` };
+			elasticQuery.query.bool.must.push({
+				wildcard: {
+					name: `*${nameJson.like}*`,
+				},
+			});
 	}
 
 	if (locale) {
 		const localeJson = JSON.parse(locale);
-		localeFilters.locale = {};
 		if (localeJson.like)
-			localeFilters.locale = { [Op.iLike]: `%${localeJson.like}%` };
+			elasticQuery.query.bool.must.push({
+				wildcard: {
+					locale: `*${localeJson.like}*`,
+				},
+			});
 	}
-
-	const offset = getOffset(pageFilters.page, pageFilters.size);
-	const products = await db.products.findAndCountAll({
-		where: {
-			...nameFilters,
-			...localeFilters,
-			...clickFilters,
-			...purchaseFilters,
-			...itemIdFilters,
-		},
-		order: sortCriteria,
-		attributes: ['id', 'item_id', 'name', 'locale', 'click', 'purchase'],
-		offset,
-		limit: pageFilters.size,
-		raw: true,
-	});
-
-	return products;
+	try {
+		const products = await axios.get(
+			`http://${elasticSearch.host}:9200/products/_search`,
+			{
+				data: JSON.stringify(elasticQuery),
+				proxy: false,
+				headers: {
+					'Content-Type': 'application/json',
+				},
+			}
+		);
+		return products.data;
+	} catch (error) {
+		console.error('error message: ', error.message);
+	}
 }
 
 module.exports = {

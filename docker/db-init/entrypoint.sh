@@ -1,6 +1,6 @@
 #!/bin/sh
 set -e
 
-sleep 1
+sleep 2
 yarn db:migrate
 yarn db:seed
