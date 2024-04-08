@@ -9,7 +9,6 @@ RUN yarn install --production=false
 
 COPY ./docker/db-init/entrypoint.sh /app
 COPY ./docker/db-init/bulk.json /app
-COPY ./docker/db-init/insert.sh /app
 
 RUN apt-get -y update \
     && apt-get -y install curl

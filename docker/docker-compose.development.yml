@@ -34,7 +34,6 @@ services:
           - ../src:/app/src:ro
           - ../docker/db-init/entrypoint.sh:/app/entrypoint.sh:ro
           - ../docker/db-init/bulk.json:/app/bulk.json:ro
-          - ../docker/db-init/insert.sh:/app/insert.sh:ro
           - ../.sequelizerc:/app/.sequelizerc:ro
           - ../package.json:/app/package.json:ro
       environment:

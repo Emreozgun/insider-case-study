@@ -15,6 +15,8 @@ const router = express.Router();
 // TODO: add enpoint for change active configuration
 
 router.get('/', productController.getProducts);
+router.post('/config/active/:id', productController.setActiveConfig);
+router.get('/configs', productController.getAllConfigs);
 
 /**
  * @swagger
@@ -150,5 +152,78 @@ router.get('/', productController.getProducts);
  *                         items:
  *                           type: object
  *                           description: Information about each hit
+ * /product/config/active/{id}:
+ *    post:
+ *       summary: Set active configuration
+ *       description: Set active configuration by id
+ *       tags: [Products]
+ *       parameters:
+ *        - in: path
+ *          name: id
+ *          required: true
+ *          schema:
+ *            type: integer
+ *          description: Configuration id
+ *       responses:
+ *         '200':
+ *           description: Successful response
+ *           content:
+ *             application/json:
+ *               schema:
+ *                 type: object
+ *                 properties:
+ *                   message:
+ *                     type: string
+ *                     description: Success message
+ *                   data:
+ *                     type: object
+ *                     description: Updated configuration data
+ *         '400':
+ *           description: Bad request
+ *           content:
+ *             application/json:
+ *               schema:
+ *                 type: object
+ *                 properties:
+ *                   message:
+ *                     type: string
+ *                     description: Error message
+ *         '401':
+ *           description: Unauthorized
+ *           content:
+ *             application/json:
+ *               schema:
+ *                 type: object
+ *                 properties:
+ *                   message:
+ *                     type: string
+ *                     description: Error message
+ * /product/configs:
+ *    get:
+ *       summary: Get all configurations
+ *       description: Retrieve all configurations
+ *       tags: [Products]
+ *       responses:
+ *         '200':
+ *           description: Successful response
+ *           content:
+ *             application/json:
+ *               schema:
+ *                 type: object
+ *                 properties:
+ *                   configurations:
+ *                     type: array
+ *                     items:
+ *                       $ref: '#/components/schemas/Configuration'
+ *         '500':
+ *           description: Internal server error
+ *           content:
+ *             application/json:
+ *               schema:
+ *                 type: object
+ *                 properties:
+ *                   message:
+ *                     type: string
+ *                     description: Error message
  */
 module.exports = router;

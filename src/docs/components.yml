@@ -15,6 +15,24 @@ components:
                     type: number
                 purchase:
                     type: number
+        Configuration:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: Unique identifier for the configuration
+                name:
+                    type: string
+                    description: Name of the configuration
+                sort_by:
+                    type: string
+                    description: Field used for sorting
+                sort_order:
+                    type: string
+                    description: Order of sorting (asc or desc)
+                is_active:
+                    type: boolean
+                    description: Indicates whether the configuration is active or not
         Error:
             type: object
             properties:

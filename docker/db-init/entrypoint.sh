@@ -5,8 +5,6 @@ sleep 2
 yarn db:migrate
 yarn db:seed
 
-curl -s "http://elasticsearch:9200"
-
 curl -XDELETE "http://elasticsearch:9200/_all"
 
 curl -XPUT "http://elasticsearch:9200/products"
